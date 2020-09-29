@@ -9,23 +9,29 @@
 import SwiftUI
 
 struct MainView: View {
+    var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         Color.black
             .overlay(
-                CalculatorMainScreen()
+                CalculatorMainScreen(calculatorViewModel: calculatorViewModel)
                 ).edgesIgnoringSafeArea(.all)
     }
 }
 
 struct CalculatorMainScreen: View {
     @State var operation: String = ""
+    @State var currentNumber: String = ""
+    
+    var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         VStack(){
             DisplayOperationView(operation: $operation)
                 .padding()
-            KeypadView(symbol: $operation)
+            KeypadView(symbol: $operation,
+                       currentNumber: $currentNumber,
+                       calculatorViewModel: calculatorViewModel)
         }
     }
 }
@@ -44,13 +50,19 @@ struct DisplayOperationView: View {
 
 struct KeypadView: View {
     @Binding var symbol: String
+    @Binding var currentNumber: String
+    
+    var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         VStack(alignment: .center, spacing: 10.0){
             SpecialPadView(symbol: $symbol)
             HStack{
-                NumberPadView(symbol: $symbol)
-                OperandPadView(symbol: $symbol)
+                NumberPadView(symbol: $symbol,
+                              currentNumber: $currentNumber)
+                OperandPadView(symbol: $symbol,
+                               currentNumber: $currentNumber,
+                               calculatorViewModel: calculatorViewModel)
             }
         }
     }
@@ -58,6 +70,6 @@ struct KeypadView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        MainView()
+        MainView(calculatorViewModel: CalculatorViewModel())
     }
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		890170872523A3F500C39494 /* CalculatorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 890170862523A3F500C39494 /* CalculatorViewModel.swift */; };
 		891B26E825212A030082DD9C /* NumberPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B26E725212A030082DD9C /* NumberPadView.swift */; };
 		891B26EA25212DF40082DD9C /* OperandPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B26E925212DF40082DD9C /* OperandPadView.swift */; };
 		891B26EC25212E8E0082DD9C /* SpecialPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B26EB25212E8E0082DD9C /* SpecialPadView.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		890170862523A3F500C39494 /* CalculatorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewModel.swift; sourceTree = "<group>"; };
 		891B26E725212A030082DD9C /* NumberPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberPadView.swift; sourceTree = "<group>"; };
 		891B26E925212DF40082DD9C /* OperandPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OperandPadView.swift; sourceTree = "<group>"; };
 		891B26EB25212E8E0082DD9C /* SpecialPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpecialPadView.swift; sourceTree = "<group>"; };
@@ -96,6 +98,7 @@
 		89B7F9672520FBC200024DEA /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				890170862523A3F500C39494 /* CalculatorViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -171,6 +174,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				890170872523A3F500C39494 /* CalculatorViewModel.swift in Sources */,
 				891B26E825212A030082DD9C /* NumberPadView.swift in Sources */,
 				891B26EA25212DF40082DD9C /* OperandPadView.swift in Sources */,
 				894474762519282B0000296A /* AppDelegate.swift in Sources */,

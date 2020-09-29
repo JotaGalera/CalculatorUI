@@ -10,31 +10,61 @@ import SwiftUI
 
 struct OperandPadView: View {
     @Binding var symbol: String
+    @Binding var currentNumber: String
+    
+    var calculatorViewModel: CalculatorViewModel
     
     var body: some View{
         VStack(alignment: .center, spacing: 10.0){
-            ButtonOperand(digit: "x", symbol: $symbol)
-            ButtonOperand(digit: "-", symbol: $symbol)
-            ButtonOperand(digit: "+", symbol: $symbol)
-            ButtonEqualOperation()
+            ButtonOperand(symbol: $symbol,
+                          currentNumber: $currentNumber,
+                          digit: "x",
+                          calculatorViewModel: calculatorViewModel)
+            ButtonOperand(symbol: $symbol,
+                          currentNumber: $currentNumber,
+                          digit: "-",
+                          calculatorViewModel: calculatorViewModel)
+            ButtonOperand(symbol: $symbol,
+                          currentNumber: $currentNumber,
+                          digit: "+",
+                          calculatorViewModel: calculatorViewModel)
+            ButtonEqualOperation(symbol: $symbol,
+                                 currentNumber: $currentNumber,
+                                 calculatorViewModel: calculatorViewModel)
         }
     }
 }
 
 struct ButtonOperand: View {
-    var digit: String
     @Binding var symbol: String
+    @Binding var currentNumber: String
+    
+    var digit: String
+    var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
-        Button(action: { self.symbol += self.digit
+        Button(action: {
+            self.calculatorViewModel.addToNumber(operation: self.currentNumber)
+            self.symbol += self.digit
+            self.calculatorViewModel.addToOperand(operation: self.digit)
+            self.currentNumber = ""
         }){
             ButtonBasicOperationStyle(operation: digit, colorText: Color.white)
         }
     }
 }
 struct ButtonEqualOperation: View {
+    @Binding var symbol: String
+    @Binding var currentNumber: String
+    
+    var calculatorViewModel: CalculatorViewModel
+    
     var body: some View {
-        Button(action: { print("Tap plus button")}){
+        Button(action: {
+            self.calculatorViewModel.addToNumber(operation: self.currentNumber)
+            self.symbol = self.calculatorViewModel.getResult()
+            
+        }){
             ButtonBasicOperationStyle(operation: "=", colorText: Color.white)
         }
     }
@@ -57,7 +87,9 @@ struct ButtonBasicOperationStyle: View {
 #if DEBUG
 struct OperandPadView_Previews: PreviewProvider {
     static var previews: some View {
-        OperandPadView(symbol: .constant("+-x"))
+        OperandPadView(symbol: .constant("+-x"),
+                       currentNumber: .constant("123"),
+                       calculatorViewModel: CalculatorViewModel())
     }
 }
 #endif
