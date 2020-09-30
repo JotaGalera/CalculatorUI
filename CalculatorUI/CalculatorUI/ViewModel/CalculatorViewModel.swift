@@ -28,25 +28,36 @@ class CalculatorViewModel {
     }
     
     private func calculate() {
-        for index in 0...numbers.count-2 {
-            result += decideOperation(num1: numbers[index], num2: numbers[index+1])
+        
+        result += decideOperation(num1: numbers[0], num2: numbers[1])
+        if numbers.count > 1{
+            for index in 2...numbers.count-1 {
+                result = decideOperation(num1: result, num2: numbers[index])
+            }
         }
     }
     
     private func decideOperation(num1: Double, num2: Double) -> Double{
         switch operands[0] {
             case "+":
+                removeOperandUsed()
                 return add(number1: num1, number2: num2)
             case "-":
-                return add(number1: num1, number2: num2)
+                removeOperandUsed()
+                return substract(number1: num1, number2: num2)
             case "x":
-                return add(number1: num1, number2: num2)
+                removeOperandUsed()
+                return multiply(number1: num1, number2: num2)
             case "÷":
-                return add(number1: num1, number2: num2)
+                removeOperandUsed()
+                return divide(number1: num1, number2: num2)
             default:
                 return 0
         }
-        operands.remove(at: 0)
+    }
+    
+    private func removeOperandUsed(){
+        operands.removeFirst()
     }
     
     func add(number1: Double, number2: Double) -> Double{
