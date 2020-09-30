@@ -56,7 +56,7 @@ struct KeypadView: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 10.0){
-            SpecialPadView(symbol: $symbol)
+            SpecialPadView(symbol: $symbol, calculatorViewModel: calculatorViewModel)
             HStack{
                 NumberPadView(symbol: $symbol,
                               currentNumber: $currentNumber)

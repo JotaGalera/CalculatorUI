@@ -14,6 +14,13 @@ class CalculatorViewModel {
     private var operands: [String] = []
     private var result: Double = 0
     
+    func resetViewModel() {
+        self.operation = ""
+        self.numbers = []
+        self.operands = []
+        self.result = 0
+    }
+    
     func addToNumber(operation: String) {
         numbers.append( convertStringToDouble(operation) )
     }
@@ -30,7 +37,7 @@ class CalculatorViewModel {
     private func calculate() {
         
         result += decideOperation(num1: numbers[0], num2: numbers[1])
-        if numbers.count > 1{
+        if numbers.count > 2{
             for index in 2...numbers.count-1 {
                 result = decideOperation(num1: result, num2: numbers[index])
             }

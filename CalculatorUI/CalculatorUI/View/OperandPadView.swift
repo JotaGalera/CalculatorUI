@@ -62,6 +62,7 @@ struct ButtonEqualOperation: View {
     var body: some View {
         Button(action: {
             self.calculatorViewModel.addToNumber(operation: self.currentNumber)
+            self.currentNumber = "0"
             self.symbol = self.calculatorViewModel.getResult()
             
         }){

@@ -11,9 +11,11 @@ import SwiftUI
 struct SpecialPadView: View {
     @Binding var symbol: String
     
+    var calculatorViewModel: CalculatorViewModel
+    
     var body: some View {
         HStack(alignment: .center, spacing: 10.0){
-            ButtonAllClear(symbol: $symbol)
+            ButtonAllClear(symbol: $symbol, calculatorViewModel: calculatorViewModel)
             ButtonChangeSign()
             ButtonPercentage()
             ButtonDivideOperation(symbol: $symbol)
@@ -24,8 +26,13 @@ struct SpecialPadView: View {
 struct ButtonAllClear: View {
     @Binding var symbol: String
     
+    var calculatorViewModel: CalculatorViewModel
+    
     var body: some View {
-        Button(action: { self.symbol = "" }){
+        Button(action: {
+            self.symbol = ""
+            self.calculatorViewModel.resetViewModel()
+        }){
             ButtonSpecialPadStyle(operation: "AC", colorText: Color.black)
         }
     }
@@ -76,7 +83,8 @@ struct ButtonSpecialPadStyle: View {
 #if DEBUG
 struct SpecialPadView_Previews: PreviewProvider {
     static var previews: some View {
-        SpecialPadView(symbol: .constant(""))
+        SpecialPadView(symbol: .constant(""),
+                       calculatorViewModel: CalculatorViewModel())
     }
 }
 #endif
