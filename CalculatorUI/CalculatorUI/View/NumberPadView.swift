@@ -9,77 +9,53 @@
 import SwiftUI
 
 struct NumberPadView: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
+    var calculatorViewModel: CalculatorViewModel
         
     var body: some View {
         VStack(alignment: .center, spacing: 10.0){
             HStack(alignment: .center, spacing: 10.0){
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "7")
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "8")
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "9")
                 
             }
             HStack(alignment: .center, spacing: 10.0){
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "4")
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "5")
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "6")
             }
             HStack(alignment: .center, spacing: 10.0){
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "1")
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "2")
-                ButtonNumber(symbol: $symbol,
-                             currentNumber: $currentNumber,
+                ButtonNumber(calculatorViewModel: calculatorViewModel,
                              digit: "3")
             }
             HStack(alignment: .center, spacing: 10.0){
-                ButtonLargeNumber(symbol: $symbol,
-                                  currentNumber: $currentNumber,
+                ButtonLargeNumber(calculatorViewModel: calculatorViewModel,
                                   digit: "0")
-                ButtonComma(symbol: $symbol)
+                ButtonComma(calculatorViewModel: calculatorViewModel)
             }
-        }
-    }
-}
-
-struct ButtonComma: View {
-    private let digit = ","
-    @Binding var symbol: String
-    
-    var body: some View {
-        Button(action: { self.symbol += self.digit
-        }){
-            ButtonNumberStyle(digit: digit)
         }
     }
 }
 
 struct ButtonNumber: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
+    var calculatorViewModel: CalculatorViewModel
     
     var digit: String
     
     var body: some View {
         Button(action: {
-            self.symbol += self.digit
-            self.currentNumber.append(contentsOf: self.digit)
+            self.calculatorViewModel.addToOperationsDisplayed(digits: self.digit)
+            self.calculatorViewModel.addCurrentNumber(digit: self.digit)
         }){
             ButtonNumberStyle(digit: digit)
         }
@@ -87,17 +63,31 @@ struct ButtonNumber: View {
 }
 
 struct ButtonLargeNumber: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
+    var calculatorViewModel: CalculatorViewModel
     
     var digit: String
     
     var body: some View {
         Button(action: {
-            self.symbol += self.digit
-            self.currentNumber.append(contentsOf: self.digit)
+            self.calculatorViewModel.addToOperationsDisplayed(digits: self.digit)
+            self.calculatorViewModel.addCurrentNumber(digit: self.digit)
         }){
             ButtonNumberLargeStyle(digit: digit)
+        }
+    }
+}
+
+struct ButtonComma: View {
+    private let digit = ","
+    
+    var calculatorViewModel: CalculatorViewModel
+    
+    var body: some View {
+        Button(action: {
+            self.calculatorViewModel.addToOperationsDisplayed(digits: self.digit)
+            //TODO: Add to currentNumber
+        }){
+            ButtonNumberStyle(digit: digit)
         }
     }
 }
@@ -134,8 +124,7 @@ struct ButtonNumberStyle: View {
 struct NumberPadView_Previews: PreviewProvider {
     
     static var previews: some View {
-        NumberPadView(symbol: .constant("0123456789"),
-                      currentNumber: .constant("123"))
+        NumberPadView(calculatorViewModel: CalculatorViewModel())
     }
 }
 #endif

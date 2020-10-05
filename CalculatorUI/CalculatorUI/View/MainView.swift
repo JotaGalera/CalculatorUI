@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct MainView: View {
-    var calculatorViewModel: CalculatorViewModel
+    @ObservedObject var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         Color.black
@@ -20,27 +20,22 @@ struct MainView: View {
 }
 
 struct CalculatorMainScreen: View {
-    @State var operation: String = ""
-    @State var currentNumber: String = ""
-    
-    var calculatorViewModel: CalculatorViewModel
+    @ObservedObject var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         VStack(){
-            DisplayOperationView(operation: $operation)
+            DisplayOperationView(calculatorViewModel: calculatorViewModel)
                 .padding()
-            KeypadView(symbol: $operation,
-                       currentNumber: $currentNumber,
-                       calculatorViewModel: calculatorViewModel)
+            KeypadView(calculatorViewModel: calculatorViewModel)
         }
     }
 }
 
 struct DisplayOperationView: View {
-    @Binding var operation: String
+    @ObservedObject var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
-        Text(operation)
+        Text(calculatorViewModel.getOperationsDisplayed())
         .padding()
         .font(Font.custom("Montserrat-Bold", size: 50.0))
         .foregroundColor(Color.white)
@@ -49,20 +44,14 @@ struct DisplayOperationView: View {
 }
 
 struct KeypadView: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
-    
     var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         VStack(alignment: .center, spacing: 10.0){
-            SpecialPadView(symbol: $symbol, calculatorViewModel: calculatorViewModel)
+            SpecialPadView(calculatorViewModel: calculatorViewModel)
             HStack{
-                NumberPadView(symbol: $symbol,
-                              currentNumber: $currentNumber)
-                OperandPadView(symbol: $symbol,
-                               currentNumber: $currentNumber,
-                               calculatorViewModel: calculatorViewModel)
+                NumberPadView(calculatorViewModel: calculatorViewModel)
+                OperandPadView(calculatorViewModel: calculatorViewModel)
             }
         }
     }

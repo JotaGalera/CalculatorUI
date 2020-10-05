@@ -9,62 +9,50 @@
 import SwiftUI
 
 struct OperandPadView: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
-    
     var calculatorViewModel: CalculatorViewModel
     
     var body: some View{
         VStack(alignment: .center, spacing: 10.0){
-            ButtonOperand(symbol: $symbol,
-                          currentNumber: $currentNumber,
-                          digit: "x",
+            ButtonOperand(digit: "x",
                           calculatorViewModel: calculatorViewModel)
-            ButtonOperand(symbol: $symbol,
-                          currentNumber: $currentNumber,
-                          digit: "-",
+            ButtonOperand(digit: "-",
                           calculatorViewModel: calculatorViewModel)
-            ButtonOperand(symbol: $symbol,
-                          currentNumber: $currentNumber,
-                          digit: "+",
+            ButtonOperand(digit: "+",
                           calculatorViewModel: calculatorViewModel)
-            ButtonEqualOperation(symbol: $symbol,
-                                 currentNumber: $currentNumber,
-                                 calculatorViewModel: calculatorViewModel)
+            ButtonEqualOperation(calculatorViewModel: calculatorViewModel)
         }
     }
 }
 
 struct ButtonOperand: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
-    
     var digit: String
     var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         Button(action: {
-            self.calculatorViewModel.addToNumber(operation: self.currentNumber)
-            self.symbol += self.digit
-            self.calculatorViewModel.addToOperand(operation: self.digit)
-            self.currentNumber = ""
+            //show the operand in the screen
+            self.calculatorViewModel.addToOperationsDisplayed(digits: self.digit)
+            //Add the last number to numbers array
+            self.calculatorViewModel.addCurrentNumberToNumber()
+            self.calculatorViewModel.cleanCurrentNumber()
+            //Add the last operand to operands array
+            self.calculatorViewModel.addToOperands(operarand: self.digit)
         }){
             ButtonBasicOperationStyle(operation: digit, colorText: Color.white)
         }
     }
 }
 struct ButtonEqualOperation: View {
-    @Binding var symbol: String
-    @Binding var currentNumber: String
-    
     var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         Button(action: {
-            self.calculatorViewModel.addToNumber(operation: self.currentNumber)
-            self.currentNumber = "0"
-            self.symbol = self.calculatorViewModel.getResult()
-            
+            //Add the last number to numbers array
+            self.calculatorViewModel.addCurrentNumberToNumber()
+            self.calculatorViewModel.cleanCurrentNumber()
+            //Calculate the result
+            let result = self.calculatorViewModel.getResult()
+            self.calculatorViewModel.setOperationDisplayed(digits: result)
         }){
             ButtonBasicOperationStyle(operation: "=", colorText: Color.white)
         }
@@ -88,9 +76,7 @@ struct ButtonBasicOperationStyle: View {
 #if DEBUG
 struct OperandPadView_Previews: PreviewProvider {
     static var previews: some View {
-        OperandPadView(symbol: .constant("+-x"),
-                       currentNumber: .constant("123"),
-                       calculatorViewModel: CalculatorViewModel())
+        OperandPadView(calculatorViewModel: CalculatorViewModel())
     }
 }
 #endif

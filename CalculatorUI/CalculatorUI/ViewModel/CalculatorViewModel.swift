@@ -8,34 +8,55 @@
 
 import Foundation
 
-class CalculatorViewModel {
-    private var operation: String = ""
+class CalculatorViewModel: ObservableObject {
+    @Published var operationsDisplayed: String = ""
+    private var currentNumber: String = ""
     private var numbers: [Double] = []
     private var operands: [String] = []
     private var result: Double = 0
     
     func resetViewModel() {
-        self.operation = ""
-        self.numbers = []
-        self.operands = []
-        self.result = 0
+        operationsDisplayed = ""
+        currentNumber = ""
+        numbers = []
+        operands = []
+        result = 0
     }
     
-    func addToNumber(operation: String) {
-        numbers.append( convertStringToDouble(operation) )
+    func addToOperationsDisplayed(digits: String) {
+        operationsDisplayed += digits
     }
     
-    func addToOperand(operation: String) {
-        operands.append(operation)
+    func setOperationDisplayed(digits: String){
+        operationsDisplayed = digits
+    }
+    
+    func getOperationsDisplayed() -> String {
+        return operationsDisplayed
+    }
+    
+    func addCurrentNumber(digit: String) {
+        currentNumber.append(digit)
+    }
+    
+    func addCurrentNumberToNumber() {
+        numbers.append( convertStringToDouble(currentNumber) )
+    }
+    
+    func cleanCurrentNumber() {
+        currentNumber = ""
+    }
+    
+    func addToOperands(operarand: String) {
+        operands.append(operarand)
     }
     
     func getResult() -> String {
-        calculate()
+        self.calculate()
         return "\(result)"
     }
     
-    private func calculate() {
-        
+    private func calculate(){
         result += decideOperation(num1: numbers[0], num2: numbers[1])
         if numbers.count > 2{
             for index in 2...numbers.count-1 {
@@ -87,4 +108,5 @@ class CalculatorViewModel {
         return (string as NSString).doubleValue
     }
 }
+
 

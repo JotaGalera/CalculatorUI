@@ -9,28 +9,23 @@
 import SwiftUI
 
 struct SpecialPadView: View {
-    @Binding var symbol: String
-    
     var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         HStack(alignment: .center, spacing: 10.0){
-            ButtonAllClear(symbol: $symbol, calculatorViewModel: calculatorViewModel)
+            ButtonAllClear(calculatorViewModel: calculatorViewModel)
             ButtonChangeSign()
             ButtonPercentage()
-            ButtonDivideOperation(symbol: $symbol)
+            ButtonDivideOperation(calculatorViewModel: calculatorViewModel)
         }
     }
 }
 
 struct ButtonAllClear: View {
-    @Binding var symbol: String
-    
     var calculatorViewModel: CalculatorViewModel
     
     var body: some View {
         Button(action: {
-            self.symbol = ""
             self.calculatorViewModel.resetViewModel()
         }){
             ButtonSpecialPadStyle(operation: "AC", colorText: Color.black)
@@ -55,13 +50,22 @@ struct ButtonPercentage: View {
 }
 
 struct ButtonDivideOperation: View {
-    private let digit = "÷"
-    private let displayedDigit = "/"
-    @Binding var symbol: String
-    
+    var calculatorViewModel: CalculatorViewModel
+    private let digitButton = "÷"
+    private let digit = "/"
+
     var body: some View {
-        Button(action: { self.symbol += self.displayedDigit}){
-            ButtonBasicOperationStyle(operation: digit, colorText: Color.white)
+        Button(action: {
+            //show the operand in the screen
+            self.calculatorViewModel.addToOperationsDisplayed(digits: self.digit)
+            //Add the last number to numbers array
+            self.calculatorViewModel.addCurrentNumberToNumber()
+            self.calculatorViewModel.cleanCurrentNumber()
+            //Add the last operand to operands array
+            self.calculatorViewModel.addToOperands(operarand: self.digit)
+            
+        }){
+            ButtonBasicOperationStyle(operation: digitButton, colorText: Color.white)
         }
     }
 }
@@ -83,8 +87,7 @@ struct ButtonSpecialPadStyle: View {
 #if DEBUG
 struct SpecialPadView_Previews: PreviewProvider {
     static var previews: some View {
-        SpecialPadView(symbol: .constant(""),
-                       calculatorViewModel: CalculatorViewModel())
+        SpecialPadView(calculatorViewModel: CalculatorViewModel())
     }
 }
 #endif
