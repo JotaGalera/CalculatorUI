@@ -15,7 +15,7 @@ struct SpecialPadView: View {
         HStack(alignment: .center, spacing: 10.0){
             ButtonAllClear(calculatorViewModel: calculatorViewModel)
             ButtonChangeSign(calculatorViewModel: calculatorViewModel)
-            ButtonPercentage()
+            ButtonPercentage(calculatorViewModel: calculatorViewModel)
             ButtonDivideOperation(calculatorViewModel: calculatorViewModel)
         }
     }
@@ -46,8 +46,12 @@ struct ButtonChangeSign: View {
 }
 
 struct ButtonPercentage: View {
+    var calculatorViewModel: CalculatorViewModel
+    
     var body: some View {
-        Button(action: { print("Tap plus button")}){
+        Button(action: {
+            self.calculatorViewModel.calculatePercentage()
+        }){
             ButtonSpecialPadStyle(operation: "%", colorText: Color.black)
         }
     }

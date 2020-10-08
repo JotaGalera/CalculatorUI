@@ -127,7 +127,16 @@ class CalculatorViewModel: ObservableObject {
             self.currentNumber = numberSignedChanged
             self.operationsDisplayed = numberSignedChanged
         }
-        
+    }
+    
+    func calculatePercentage() {
+        guard let currentNumber = currentNumber else { return }
+        let number = convertStringToDouble(currentNumber)
+        if number != 0 {
+            let percentageNumber = "\(number / 100)"
+            self.currentNumber = percentageNumber
+            self.operationsDisplayed = percentageNumber
+        }
     }
     
 }
