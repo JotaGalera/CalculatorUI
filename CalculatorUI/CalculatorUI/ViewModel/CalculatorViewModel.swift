@@ -9,38 +9,38 @@
 import Foundation
 
 class CalculatorViewModel: ObservableObject {
-    @Published var operationsDisplayed: String = ""
-    private var currentNumber: String = ""
-    private var numbers: [Double] = []
-    private var operands: [String] = []
-    private var result: Double = 0
+    @Published var operationsDisplayed: String? = ""
+    private var currentNumber: String? = ""
+    private var numbers: [Double]? = []
+    private var operands: [String]? = []
+    private var result: Double? = 0
     
-    func resetViewModel() {
-        operationsDisplayed = ""
-        currentNumber = ""
-        numbers = []
-        operands = []
-        result = 0
-    }
+    // MARK: Displayer
     
     func addToOperationsDisplayed(digits: String) {
-        operationsDisplayed += digits
+        operationsDisplayed? += digits
     }
     
     func setOperationDisplayed(digits: String){
-        operationsDisplayed = digits
+        operationsDisplayed? = digits
     }
     
     func getOperationsDisplayed() -> String {
+        guard let operationsDisplayed = operationsDisplayed else { return "" }
         return operationsDisplayed
     }
     
     func addCurrentNumber(digit: String) {
-        currentNumber.append(digit)
+        currentNumber?.append(digit)
     }
     
     func addCurrentNumberToNumber() {
-        numbers.append( convertStringToDouble(currentNumber) )
+        guard let currentNumber = currentNumber else { return }
+        numbers?.append( convertStringToDouble(currentNumber) )
+    }
+    
+    private func convertStringToDouble(_ string: String) -> Double {
+        return (string as NSString).doubleValue
     }
     
     func cleanCurrentNumber() {
@@ -48,25 +48,32 @@ class CalculatorViewModel: ObservableObject {
     }
     
     func addToOperands(operarand: String) {
-        operands.append(operarand)
+        operands?.append(operarand)
     }
+    
+    // MARK: Buttons
     
     func getResult() -> String {
         self.calculate()
-        return "\(result)"
+        return "\(result ?? 0)"
     }
     
     private func calculate(){
-        result += decideOperation(num1: numbers[0], num2: numbers[1])
-        if numbers.count > 2{
-            for index in 2...numbers.count-1 {
-                result = decideOperation(num1: result, num2: numbers[index])
+        guard let number1 = numbers?[0], let number2 = numbers?[1] else {return}
+        
+        result? += decideOperation(num1: number1, num2: number2)
+        
+        guard let count = numbers?.count else { return }
+        if count > 2{
+            for index in 2...count-1 {
+                guard let res = result, let number = numbers?[index] else { return }
+                result = decideOperation(num1: res, num2: number)
             }
         }
     }
     
-    private func decideOperation(num1: Double, num2: Double) -> Double{
-        switch operands[0] {
+    private func decideOperation(num1: Double, num2: Double) -> Double {
+        switch operands?[0] {
             case "+":
                 removeOperandUsed()
                 return add(number1: num1, number2: num2)
@@ -85,28 +92,44 @@ class CalculatorViewModel: ObservableObject {
     }
     
     private func removeOperandUsed(){
-        operands.removeFirst()
+        operands?.removeFirst()
     }
     
-    func add(number1: Double, number2: Double) -> Double{
+    private func add(number1: Double, number2: Double) -> Double{
         return number1 + number2
     }
     
-    func substract(number1: Double, number2: Double) -> Double {
+    private func substract(number1: Double, number2: Double) -> Double {
         return number1 - number2
     }
     
-    func multiply(number1: Double, number2: Double) -> Double {
+    private func multiply(number1: Double, number2: Double) -> Double {
         return number1 * number2
     }
     
-    func divide(number1: Double, number2: Double) -> Double {
+    private func divide(number1: Double, number2: Double) -> Double {
         return number1 / number2
     }
     
-    private func convertStringToDouble(_ string: String) -> Double {
-        return (string as NSString).doubleValue
+    func resetViewModel() {
+        operationsDisplayed = ""
+        currentNumber = ""
+        numbers = []
+        operands = []
+        result = 0
     }
+    
+    func changeSign() {
+        guard let currentNumber = currentNumber else { return }
+        let number = convertStringToDouble(currentNumber)
+        if number != 0 {
+            let numberSignedChanged = "\(number * -1)"
+            self.currentNumber = numberSignedChanged
+            self.operationsDisplayed = numberSignedChanged
+        }
+        
+    }
+    
 }
 
 

@@ -14,7 +14,7 @@ struct SpecialPadView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 10.0){
             ButtonAllClear(calculatorViewModel: calculatorViewModel)
-            ButtonChangeSign()
+            ButtonChangeSign(calculatorViewModel: calculatorViewModel)
             ButtonPercentage()
             ButtonDivideOperation(calculatorViewModel: calculatorViewModel)
         }
@@ -34,8 +34,12 @@ struct ButtonAllClear: View {
 }
 
 struct ButtonChangeSign: View {
+    var calculatorViewModel: CalculatorViewModel
+    
     var body: some View {
-        Button(action: { print("Tap plus button")}){
+        Button(action: {
+            self.calculatorViewModel.changeSign()
+        }){
             ButtonSpecialPadStyle(operation: "+/-", colorText: Color.black)
         }
     }
