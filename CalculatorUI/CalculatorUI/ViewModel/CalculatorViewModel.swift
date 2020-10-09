@@ -89,7 +89,7 @@ class CalculatorViewModel: ObservableObject {
             case "x":
                 removeOperandUsed()
                 return multiply(number1: num1, number2: num2)
-            case "÷":
+            case "/":
                 removeOperandUsed()
                 return divide(number1: num1, number2: num2)
             default:
