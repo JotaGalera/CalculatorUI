@@ -55,7 +55,7 @@ class CalculatorViewModel: ObservableObject {
     
     func getResult() -> String {
         self.calculate()
-        let resultFormatted = formatResult(digits: "\(result ?? 0)")
+        let resultFormatted = formatResult(result: "\(result ?? 0)")
         return resultFormatted
     }
     
@@ -73,8 +73,8 @@ class CalculatorViewModel: ObservableObject {
         }
     }
     
-    private func formatResult(digits: String) -> String{
-        let resultFormatted = digits.replacingOccurrences(of: ".", with: ",")
+    private func formatResult(result: String) -> String{
+        let resultFormatted = result.replacingOccurrences(of: ".", with: ",")
         return resultFormatted
     }
     
