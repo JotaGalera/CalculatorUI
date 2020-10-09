@@ -13,7 +13,7 @@ class CalculatorViewModel: ObservableObject {
     private var currentNumber: String? = ""
     private var numbers: [Double]? = []
     private var operands: [String]? = []
-    private var result: Double? = 0
+    private var result: Double?
     
     // MARK: Displayer
     
@@ -55,16 +55,21 @@ class CalculatorViewModel: ObservableObject {
     
     func getResult() -> String {
         self.calculate()
-        let resultFormatted = formatResult(result: "\(result ?? 0)")
+        
+        guard let resultDisplayed = result else {
+            return "0"
+        }
+        
+        let resultFormatted = formatResult(result: "\(resultDisplayed)")
         return resultFormatted
     }
     
     private func calculate(){
+        guard let count = numbers?.count, count > 1 else { return }
         guard let number1 = numbers?[0], let number2 = numbers?[1] else {return}
         
         result? += decideOperation(num1: number1, num2: number2)
         
-        guard let count = numbers?.count else { return }
         if count > 2{
             for index in 2...count-1 {
                 guard let res = result, let number = numbers?[index] else { return }
