@@ -41,7 +41,8 @@ struct NumberPadView: View {
             HStack(alignment: .center, spacing: 10.0){
                 ButtonLargeNumber(calculatorViewModel: calculatorViewModel,
                                   digit: "0")
-                ButtonComma(calculatorViewModel: calculatorViewModel)
+                ButtonComma(calculatorViewModel: calculatorViewModel,
+                            digit: ",")
             }
         }
     }
@@ -78,13 +79,14 @@ struct ButtonLargeNumber: View {
 }
 
 struct ButtonComma: View {
-    private let digit = ","
-    
     var calculatorViewModel: CalculatorViewModel
+    
+    var digit: String
     
     var body: some View {
         Button(action: {
             self.calculatorViewModel.addToOperationsDisplayed(digits: self.digit)
+            self.calculatorViewModel.addCurrentNumber(digit: ".")
             //TODO: Add to currentNumber
         }){
             ButtonNumberStyle(digit: digit)

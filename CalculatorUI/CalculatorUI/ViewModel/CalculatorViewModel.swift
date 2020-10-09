@@ -55,7 +55,8 @@ class CalculatorViewModel: ObservableObject {
     
     func getResult() -> String {
         self.calculate()
-        return "\(result ?? 0)"
+        let resultFormatted = formatResult(digits: "\(result ?? 0)")
+        return resultFormatted
     }
     
     private func calculate(){
@@ -70,6 +71,11 @@ class CalculatorViewModel: ObservableObject {
                 result = decideOperation(num1: res, num2: number)
             }
         }
+    }
+    
+    private func formatResult(digits: String) -> String{
+        let resultFormatted = digits.replacingOccurrences(of: ".", with: ",")
+        return resultFormatted
     }
     
     private func decideOperation(num1: Double, num2: Double) -> Double {
@@ -138,7 +144,6 @@ class CalculatorViewModel: ObservableObject {
             self.operationsDisplayed = percentageNumber
         }
     }
-    
 }
 
 
