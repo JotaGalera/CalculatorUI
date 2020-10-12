@@ -13,16 +13,12 @@ class CalculatorViewModel: ObservableObject {
     private var currentNumber: String? = ""
     private var numbers: [Double]? = []
     private var operands: [String]? = []
-    private var result: Double?
+    private var result: Double? = 0
     
     // MARK: Displayer
     
     func addToOperationsDisplayed(digits: String) {
         operationsDisplayed? += digits
-    }
-    
-    func setOperationDisplayed(digits: String){
-        operationsDisplayed? = digits
     }
     
     func getOperationsDisplayed() -> String {
@@ -39,6 +35,14 @@ class CalculatorViewModel: ObservableObject {
         numbers?.append( convertStringToDouble(currentNumber) )
     }
     
+    private func setOperationDisplayed(digits: String){
+        operationsDisplayed? = digits
+    }
+    
+    private func setCurrentNumber(digit: String){
+        self.currentNumber = digit
+    }
+    
     private func convertStringToDouble(_ string: String) -> Double {
         return (string as NSString).doubleValue
     }
@@ -51,59 +55,42 @@ class CalculatorViewModel: ObservableObject {
         operands?.append(operarand)
     }
     
-    // MARK: Buttons
+    // MARK: Buttons Functionality
     
-    func getResult() -> String {
-        self.calculate()
-        
-        guard let resultDisplayed = result else {
-            return "0"
-        }
-        
-        let resultFormatted = formatResult(result: "\(resultDisplayed)")
-        return resultFormatted
+    func getResult() {
+        self.calculateResult()
+        self.setUpDisplayedResult()
     }
     
-    private func calculate(){
+    private func calculateResult(){
         guard let count = numbers?.count, count > 1 else { return }
         guard let number1 = numbers?[0], let number2 = numbers?[1] else {return}
         
         result? += decideOperation(num1: number1, num2: number2)
+        removeOperandUsed()
         
         if count > 2{
             for index in 2...count-1 {
                 guard let res = result, let number = numbers?[index] else { return }
                 result = decideOperation(num1: res, num2: number)
+                removeOperandUsed()
             }
         }
-    }
-    
-    private func formatResult(result: String) -> String{
-        let resultFormatted = result.replacingOccurrences(of: ".", with: ",")
-        return resultFormatted
     }
     
     private func decideOperation(num1: Double, num2: Double) -> Double {
         switch operands?[0] {
             case "+":
-                removeOperandUsed()
                 return add(number1: num1, number2: num2)
             case "-":
-                removeOperandUsed()
                 return substract(number1: num1, number2: num2)
             case "x":
-                removeOperandUsed()
                 return multiply(number1: num1, number2: num2)
             case "/":
-                removeOperandUsed()
                 return divide(number1: num1, number2: num2)
             default:
                 return 0
         }
-    }
-    
-    private func removeOperandUsed(){
-        operands?.removeFirst()
     }
     
     private func add(number1: Double, number2: Double) -> Double{
@@ -122,11 +109,38 @@ class CalculatorViewModel: ObservableObject {
         return number1 / number2
     }
     
-    func resetViewModel() {
+    private func removeOperandUsed(){
+        operands?.removeFirst()
+    }
+    
+    private func setUpDisplayedResult() {
+        guard let resultDisplayed = result else {
+            setOperationDisplayed(digits: "0")
+            return
+        }
+
+        setCurrentNumber(digit: "\(resultDisplayed)")
+        resetValues()
+    
+        let resultFormatted = formatResult(result: "\(resultDisplayed)")
+        setOperationDisplayed(digits: resultFormatted)
+    }
+    
+    private func resetValues() {
+        numbers?.removeAll()
+        result = 0
+    }
+    
+    private func formatResult(result: String) -> String{
+        let resultFormatted = result.replacingOccurrences(of: ".", with: ",")
+        return resultFormatted
+    }
+    
+    func allClear() {
         operationsDisplayed = ""
         currentNumber = ""
-        numbers = []
-        operands = []
+        numbers?.removeAll()
+        operands?.removeAll()
         result = 0
     }
     

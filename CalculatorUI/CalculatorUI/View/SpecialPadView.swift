@@ -26,7 +26,7 @@ struct ButtonAllClear: View {
     
     var body: some View {
         Button(action: {
-            self.calculatorViewModel.resetViewModel()
+            self.calculatorViewModel.allClear()
         }){
             ButtonSpecialPadStyle(operation: "AC", colorText: Color.black)
         }

@@ -51,8 +51,7 @@ struct ButtonEqualOperation: View {
             self.calculatorViewModel.addCurrentNumberToNumber()
             self.calculatorViewModel.cleanCurrentNumber()
             //Calculate the result
-            let result = self.calculatorViewModel.getResult()
-            self.calculatorViewModel.setOperationDisplayed(digits: result)
+            self.calculatorViewModel.getResult()
         }){
             ButtonBasicOperationStyle(operation: "=", colorText: Color.white)
         }
