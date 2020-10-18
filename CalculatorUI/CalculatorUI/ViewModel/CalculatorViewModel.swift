@@ -118,12 +118,13 @@ class CalculatorViewModel: ObservableObject {
             setOperationDisplayed(digits: "0")
             return
         }
-
-        setCurrentNumber(digit: "\(resultDisplayed)")
-        resetValues()
+        preparingNextOperation(firtOperand: resultDisplayed)
+        preparingResultToBeDisplayed(resultDisplayed: resultDisplayed)
+    }
     
-        let resultFormatted = formatResult(result: "\(resultDisplayed)")
-        setOperationDisplayed(digits: resultFormatted)
+    private func preparingNextOperation(firtOperand: Double) {
+        setCurrentNumber(digit: "\(firtOperand)")
+        resetValues()
     }
     
     private func resetValues() {
@@ -131,7 +132,18 @@ class CalculatorViewModel: ObservableObject {
         result = 0
     }
     
+    private func preparingResultToBeDisplayed(resultDisplayed: Double) {
+        let resultFormatted = formatResult(result: "\(resultDisplayed)")
+        setOperationDisplayed(digits: resultFormatted)
+    }
+    
     private func formatResult(result: String) -> String{
+        let resultDouble = convertStringToDouble(result)
+        
+        let hasDecimalNumbers = resultDouble.truncatingRemainder(dividingBy: 1) != 0
+        guard hasDecimalNumbers else {
+            return "\(Int(resultDouble))"
+        }
         let resultFormatted = result.replacingOccurrences(of: ".", with: ",")
         return resultFormatted
     }
@@ -160,7 +172,7 @@ class CalculatorViewModel: ObservableObject {
         if number != 0 {
             let percentageNumber = "\(number / 100)"
             self.currentNumber = percentageNumber
-            self.operationsDisplayed = percentageNumber
+            self.operationsDisplayed = formatResult(result: percentageNumber)
         }
     }
 }
