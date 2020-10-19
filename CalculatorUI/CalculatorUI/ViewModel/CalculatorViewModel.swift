@@ -63,6 +63,8 @@ class CalculatorViewModel: ObservableObject {
     }
     
     private func calculateResult(){
+        calculatePriorityOperations()
+        
         guard let count = numbers?.count, count > 1 else { return }
         guard let number1 = numbers?[0], let number2 = numbers?[1] else {return}
         
@@ -76,6 +78,22 @@ class CalculatorViewModel: ObservableObject {
                 removeOperandUsed()
             }
         }
+    }
+    
+    private func calculatePriorityOperations() {
+        var arrayNumbersIndexRemoved: [Int] = []
+        
+        for index in 0...operands!.count-1 {
+            if operands![index] == "x" {
+                numbers![index] = multiply(number1: numbers![index], number2: numbers![index+1])
+                arrayNumbersIndexRemoved.append(index+1)
+            }
+        }
+        
+        for index in arrayNumbersIndexRemoved.reversed() {
+            numbers?.remove(at: index)
+        }
+        operands?.removeAll(where: { $0 == "x"} )
     }
     
     private func decideOperation(num1: Double, num2: Double) -> Double {
