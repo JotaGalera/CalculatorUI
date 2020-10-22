@@ -57,6 +57,8 @@ class CalculatorViewModel: ObservableObject {
     
     // MARK: Buttons Functionality
     
+    // MARK: - Calculate result -
+    
     func getResult() {
         self.calculateResult()
         self.setUpDisplayedResult()
@@ -180,6 +182,8 @@ class CalculatorViewModel: ObservableObject {
         return resultFormatted
     }
     
+    // MARK: - AllClear -
+    
     func allClear() {
         operationsDisplayed = ""
         currentNumber = ""
@@ -187,6 +191,8 @@ class CalculatorViewModel: ObservableObject {
         operands?.removeAll()
         result = 0
     }
+    
+    // MARK: - Change Sign -
     
     func changeSign() {
         guard let currentNumber = currentNumber else { return }
@@ -197,15 +203,35 @@ class CalculatorViewModel: ObservableObject {
             self.operationsDisplayed = numberSignedChanged
         }
     }
+
+    // MARK: - Percentage -
     
     func calculatePercentage() {
         guard let currentNumber = currentNumber else { return }
         let number = convertStringToDouble(currentNumber)
-        if number != 0 {
-            let percentageNumber = "\(number / 100)"
-            self.currentNumber = percentageNumber
-            self.operationsDisplayed = formatResult(result: percentageNumber)
-        }
+        guard number != 0 else { return }
+        let percentage = number / 100
+        let percentageDisplayed = formatResult(result: "\(percentage)")
+        
+        updateOperationDisplayedWithPercentage(previousCharacters: currentNumber, with: percentageDisplayed)
+        
+        setCurrentNumber(digit: "\(percentage)")
+    }
+    
+    private func updateOperationDisplayedWithPercentage(previousCharacters: String, with percentageDisplayed: String) {
+        guard let operationsDisplayed = operationsDisplayed else { return }
+        
+        let operationDisplayedRefreshed = replacingLastMatch(of: operationsDisplayed, previousCharacters: previousCharacters, with: percentageDisplayed)
+        
+        setOperationDisplayed(digits: operationDisplayedRefreshed)
+    }
+    
+    private func replacingLastMatch(of mainString: String, previousCharacters: String, with model: String) -> String {
+        let lastPosition = mainString.count - previousCharacters.count
+        let start = mainString.index(mainString.startIndex, offsetBy: lastPosition);
+        let end = mainString.index(mainString.startIndex, offsetBy: lastPosition + previousCharacters.count);
+        
+        return mainString.replacingCharacters(in: start..<end, with: model)
     }
 }
 
