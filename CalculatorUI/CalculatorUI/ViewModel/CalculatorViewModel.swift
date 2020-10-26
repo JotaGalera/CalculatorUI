@@ -12,10 +12,11 @@ class CalculatorViewModel: ObservableObject {
     @Published var operationsDisplayed: String? = ""
     private var currentNumber: String? = ""
     private var numbers: [Double]? = []
-    private var operands: [String]? = []
+    private var signs: [String]? = []
     private var result: Double? = 0
+    private var calculateOperationUseCase = CalculateOperationUseCase()
     
-    // MARK: Displayer
+    // MARK: View Function
     
     func addToOperationsDisplayed(digits: String) {
         operationsDisplayed? += digits
@@ -32,19 +33,7 @@ class CalculatorViewModel: ObservableObject {
     
     func addCurrentNumberToNumber() {
         guard let currentNumber = currentNumber else { return }
-        numbers?.append( convertStringToDouble(currentNumber) )
-    }
-    
-    private func setOperationDisplayed(digits: String){
-        operationsDisplayed? = digits
-    }
-    
-    private func setCurrentNumber(digit: String){
-        self.currentNumber = digit
-    }
-    
-    private func convertStringToDouble(_ string: String) -> Double {
-        return (string as NSString).doubleValue
+        numbers?.append( Utils().convertStringToDouble(currentNumber) )
     }
     
     func cleanCurrentNumber() {
@@ -52,12 +41,10 @@ class CalculatorViewModel: ObservableObject {
     }
     
     func addToOperands(operarand: String) {
-        operands?.append(operarand)
+        signs?.append(operarand)
     }
     
-    // MARK: Buttons Functionality
-    
-    // MARK: - Calculate result -
+    // MARK: Buttons Functionality - Calculate result -
     
     func getResult() {
         self.calculateResult()
@@ -72,17 +59,13 @@ class CalculatorViewModel: ObservableObject {
     private func calculateMajorPriorityOperations() {
         var arrayNumbersIndexRemoved: [Int] = []
         
-        guard let count = operands?.count, count > 1 else { return }
+        guard let count = signs?.count, count > 1 else { return }
         
         for index in 0...count-1 {
-            guard let number1 = numbers?[index], let number2 = numbers?[index+1] else { return }
+            guard let sign = signs?[index], let firstNumber = numbers?[index], let secondNumber = numbers?[index+1] else { return }
             
-            if operands?[index] == "x" {
-                numbers?[index+1] = multiply(number1: number1, number2: number2)
-                arrayNumbersIndexRemoved.append(index)
-            }
-            if operands?[index] == "/" {
-                numbers?[index+1] = divide(number1: number1, number2: number2)
+            if sign == Operations.mult.rawValue || sign == Operations.div.rawValue {
+                numbers?[index+1] = calculateOperationUseCase.decideOperation(sign: sign, firstNumber: firstNumber, secondNumber: secondNumber)
                 arrayNumbersIndexRemoved.append(index)
             }
         }
@@ -90,61 +73,22 @@ class CalculatorViewModel: ObservableObject {
         for index in arrayNumbersIndexRemoved.reversed() {
             numbers?.remove(at: index)
         }
-        operands?.removeAll(where: { $0 == "x" || $0 == "/"} )
+        signs?.removeAll(where: { $0 == "x" || $0 == "/"} )
     }
     
     private func calculateMinorPriorityOperation() {
-        guard let count = numbers?.count, count > 1 else {
-            result = numbers![0]
-            return
-        }
-        guard let number1 = numbers?[0], let number2 = numbers?[1] else {return}
+        result = numbers![0]
+        guard let count = signs?.count, count > 0 else { return }
         
-        result? += decideOperation(num1: number1, num2: number2)
-        removeOperandUsed()
+        for index in 0...count-1 {
+            guard let sign = signs?[index], let res = result, let number = numbers?[index+1] else { return }
+            result = calculateOperationUseCase.decideOperation(sign: sign, firstNumber: res, secondNumber: number)
+            removeOperandUsed()
+        }
+    }
         
-        if count > 2{
-            for index in 2...count-1 {
-                guard let res = result, let number = numbers?[index] else { return }
-                result = decideOperation(num1: res, num2: number)
-                removeOperandUsed()
-            }
-        }
-    }
-    
-    private func decideOperation(num1: Double, num2: Double) -> Double {
-        switch operands?[0] {
-            case "+":
-                return add(number1: num1, number2: num2)
-            case "-":
-                return substract(number1: num1, number2: num2)
-            case "x":
-                return multiply(number1: num1, number2: num2)
-            case "/":
-                return divide(number1: num1, number2: num2)
-            default:
-                return 0
-        }
-    }
-    
-    private func add(number1: Double, number2: Double) -> Double{
-        return number1 + number2
-    }
-    
-    private func substract(number1: Double, number2: Double) -> Double {
-        return number1 - number2
-    }
-    
-    private func multiply(number1: Double, number2: Double) -> Double {
-        return number1 * number2
-    }
-    
-    private func divide(number1: Double, number2: Double) -> Double {
-        return number1 / number2
-    }
-    
     private func removeOperandUsed(){
-        operands?.removeFirst()
+        signs?.removeFirst()
     }
     
     private func setUpDisplayedResult() {
@@ -156,9 +100,17 @@ class CalculatorViewModel: ObservableObject {
         preparingResultToBeDisplayed(resultDisplayed: resultDisplayed)
     }
     
+    private func setOperationDisplayed(digits: String){
+        operationsDisplayed? = digits
+    }
+    
     private func preparingNextOperation(firtOperand: Double) {
         setCurrentNumber(digit: "\(firtOperand)")
         resetValues()
+    }
+    
+    private func setCurrentNumber(digit: String){
+        self.currentNumber = digit
     }
     
     private func resetValues() {
@@ -172,13 +124,14 @@ class CalculatorViewModel: ObservableObject {
     }
     
     private func formatResult(result: String) -> String{
-        let resultDouble = convertStringToDouble(result)
+        let resultDouble = Utils().convertStringToDouble(result)
         
         let hasDecimalNumbers = resultDouble.truncatingRemainder(dividingBy: 1) != 0
         guard hasDecimalNumbers else {
             return "\(Int(resultDouble))"
         }
         let resultFormatted = result.replacingOccurrences(of: ".", with: ",")
+        
         return resultFormatted
     }
     
@@ -188,7 +141,7 @@ class CalculatorViewModel: ObservableObject {
         operationsDisplayed = ""
         currentNumber = ""
         numbers?.removeAll()
-        operands?.removeAll()
+        signs?.removeAll()
         result = 0
     }
     
@@ -196,7 +149,7 @@ class CalculatorViewModel: ObservableObject {
     
     func changeSign() {
         guard let currentNumber = currentNumber else { return }
-        let number = convertStringToDouble(currentNumber)
+        let number = Utils().convertStringToDouble(currentNumber)
         if number != 0 {
             let numberSignedChanged = "\(number * -1)"
             self.currentNumber = numberSignedChanged
@@ -208,7 +161,7 @@ class CalculatorViewModel: ObservableObject {
     
     func calculatePercentage() {
         guard let currentNumber = currentNumber else { return }
-        let number = convertStringToDouble(currentNumber)
+        let number = Utils().convertStringToDouble(currentNumber)
         guard number != 0 else { return }
         let percentage = number / 100
         let percentageDisplayed = formatResult(result: "\(percentage)")
