@@ -59,7 +59,7 @@ class CalculatorViewModel: ObservableObject {
     private func calculateMajorPriorityOperations() {
         var arrayNumbersIndexRemoved: [Int] = []
         
-        guard let count = signs?.count, count > 1 else { return }
+        guard let count = signs?.count, count > 0 else { return }
         
         for index in 0...count-1 {
             guard let sign = signs?[index], let firstNumber = numbers?[index], let secondNumber = numbers?[index+1] else { return }
@@ -73,7 +73,7 @@ class CalculatorViewModel: ObservableObject {
         for index in arrayNumbersIndexRemoved.reversed() {
             numbers?.remove(at: index)
         }
-        signs?.removeAll(where: { $0 == "x" || $0 == "/"} )
+        signs?.removeAll(where: { $0 == Operations.mult.rawValue || $0 == Operations.div.rawValue })
     }
     
     private func calculateMinorPriorityOperation() {
@@ -83,14 +83,10 @@ class CalculatorViewModel: ObservableObject {
         for index in 0...count-1 {
             guard let sign = signs?[index], let res = result, let number = numbers?[index+1] else { return }
             result = calculateOperationUseCase.decideOperation(sign: sign, firstNumber: res, secondNumber: number)
-            removeOperandUsed()
         }
+        signs?.removeAll(where: { $0 == Operations.sum.rawValue || $0 == Operations.subtraction.rawValue })
     }
         
-    private func removeOperandUsed(){
-        signs?.removeFirst()
-    }
-    
     private func setUpDisplayedResult() {
         guard let resultDisplayed = result else {
             setOperationDisplayed(digits: "0")
